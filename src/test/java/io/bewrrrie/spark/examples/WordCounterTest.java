@@ -2,7 +2,6 @@ package io.bewrrrie.spark.examples;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.SparkContext;
-import org.apache.spark.memory.UnifiedMemoryManager;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -24,9 +23,8 @@ public class WordCounterTest {
 	@Test
 	public void countWord() throws Exception {
 		final SparkConf conf = new SparkConf()
-			.setAppName("WordCounter")
+            .setAppName("WordCounter")
 			.setMaster("local");
-		final UnifiedMemoryManager memoryManager = new UnifiedMemoryManager(conf, 471859200, 471859200, 4);
 		final SparkContext context = new SparkContext(conf);
 
 		final File temp = folder.newFile();
