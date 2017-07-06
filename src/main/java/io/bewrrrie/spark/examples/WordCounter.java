@@ -31,7 +31,7 @@ public class WordCounter {
 			}
 		});
 		final JavaPairRDD<String, Integer> counts = ones.reduceByKey(new Function2<Integer, Integer, Integer>() {
-            @Override
+		    @Override
             public Integer call(final Integer x, final Integer y) throws Exception {
                 return x + y;
             }
