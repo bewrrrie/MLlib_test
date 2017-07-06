@@ -13,7 +13,7 @@ import scala.Tuple2;
  */
 public final class WordCounter {
 	public static Map<String, Integer> countWord(final SparkContext sc, final String filePath) {
-		return sc.textFile(filePath, 1).toJavaRDD()
+	    return sc.textFile(filePath, 1).toJavaRDD()
             .flatMap((FlatMapFunction<String, String>) s -> Arrays.asList(s.split(" ")).iterator())
             .mapToPair((PairFunction<String, String, Integer>) s -> new Tuple2<>(s, 1))
             .reduceByKey((Function2<Integer, Integer, Integer>) (x, y) -> x + y)
