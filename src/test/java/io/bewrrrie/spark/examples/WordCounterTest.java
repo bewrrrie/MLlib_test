@@ -22,15 +22,14 @@ public class WordCounterTest {
 
 	@Test
 	public void countWord() throws Exception {
-		final SparkConf conf = new SparkConf()
-			.setAppName("WordCounter")
-			.setMaster("local");
+		final SparkConf conf = new SparkConf();
+		conf.setAppName("WordCounter");
+		conf.setMaster("local");
+
 		final SparkContext context = new SparkContext(conf);
 
 		final File temp = folder.newFile();
-		Files.write(
-			temp.toPath(), "some sort of some text\n".getBytes()
-		);
+		Files.write(temp.toPath(), "some sort of some text\n".getBytes());
 
 		final Map<String, Integer> result = WordCounter.countWord(context, temp.getAbsolutePath());
 		assertEquals(result.get("some"), new Integer(2));
