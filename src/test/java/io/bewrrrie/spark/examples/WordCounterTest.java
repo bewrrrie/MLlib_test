@@ -23,7 +23,7 @@ public class WordCounterTest {
 	@Test
 	public void countWord() throws Exception {
 		final SparkConf conf = new SparkConf()
-            .setAppName("WordCounter")
+			.setAppName("WordCounter")
 			.setMaster("local");
 		final SparkContext context = new SparkContext(conf);
 
