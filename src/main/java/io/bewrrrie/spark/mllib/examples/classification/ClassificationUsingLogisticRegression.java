@@ -6,6 +6,8 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.VoidFunction;
+import org.apache.spark.mllib.classification.LogisticRegressionModel;
+import org.apache.spark.mllib.classification.LogisticRegressionWithLBFGS;
 import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.regression.LabeledPoint;
 
@@ -16,16 +18,27 @@ import java.util.Objects;
  */
 public class ClassificationUsingLogisticRegression {
 
+    private static final String APP_NAME = "Classification/LogisticRegression";
+    private static final String MASTER_URL = "local";
+
+    private static final int NUMBER_OF_CLASSES = 7;
+    private static final String TRAINING_DATA_PATH = "src/main/resources/data/train.csv";
+    private static final String TEST_DATA_PATH = "src/main/resources/data/test.csv";
+
+    
     public static void main(String[] args) {
         final SparkConf conf = new SparkConf();
-        conf.setAppName("LogisticRegression");
-        conf.setMaster("local");
+        conf.setAppName(APP_NAME);
+        conf.setMaster(MASTER_URL);
         final JavaSparkContext context = new JavaSparkContext(conf);
 
         //Put data to operative memory, supposed that there is no missing data in data set.
         //All missing data become 0.0 (zero).
-        String path = "src/main/resources/data/train.csv";
-        JavaRDD<LabeledPoint> data = getData(context, path);
+        final JavaRDD<LabeledPoint> data = getData(context, TRAINING_DATA_PATH);
+
+        final LogisticRegressionModel model = new LogisticRegressionWithLBFGS()
+            .setNumClasses(NUMBER_OF_CLASSES)
+            .run(data.rdd());
 
         data.foreach((VoidFunction<LabeledPoint>) s -> System.out.println(s));
     }
