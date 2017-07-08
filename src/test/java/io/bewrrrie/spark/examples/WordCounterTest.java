@@ -25,7 +25,6 @@ public class WordCounterTest {
 		final SparkConf conf = new SparkConf();
 		conf.setAppName("WordCounter");
 		conf.setMaster("local");
-
 		final SparkContext context = new SparkContext(conf);
 
 		final File temp = folder.newFile();
