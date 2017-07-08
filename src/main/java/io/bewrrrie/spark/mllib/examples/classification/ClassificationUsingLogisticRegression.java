@@ -22,13 +22,14 @@ public class ClassificationUsingLogisticRegression {
         conf.setMaster("local");
         final JavaSparkContext context = new JavaSparkContext(conf);
 
-        //Put data to operative memory
+        //Put data to operative memory, supposed that there is no missing data in data set.
+        //All missing data become 0.0 (zero).
         String path = "src/main/resources/data/train.csv";
         JavaRDD<LabeledPoint> data = getData(context, path);
 
-
         data.foreach((VoidFunction<LabeledPoint>) s -> System.out.println(s));
     }
+
 
     private static JavaRDD<LabeledPoint> getData(JavaSparkContext context, String path) {
         return context.textFile(path).map((Function<String, LabeledPoint>) line -> {
