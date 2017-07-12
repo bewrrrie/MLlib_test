@@ -1,34 +1,27 @@
-package io.bewrrrie.spark.mllib.examples.classification;
+package io.bewrrrie.spark.mllib.predictors.classification.random_forest;
 
+import io.bewrrrie.spark.mllib.data.DataExtractor;
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
-import org.apache.spark.api.java.function.PairFunction;
-import org.apache.spark.api.java.function.VoidFunction;
-import org.apache.spark.api.java.function.VoidFunction2;
-import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.tree.RandomForest;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
 import scala.Tuple2;
 
 import java.util.HashMap;
-import java.util.Objects;
 
 
 /**
- * First classification example.
+ * Fit and save random forest classification model.
  */
 public class ClassificationUsingRandomForest {
 
-    private static final String APP_NAME = "Classification/LogisticRegression";
+    private static final String APP_NAME = "Classification/RandomForest";
     private static final String MASTER_URL = "local";
-
-    private static final String TRAINING_DATA_PATH = "src/main/resources/data/train.csv";
-    private static final String TEST_DATA_PATH = "src/main/resources/data/test.csv";
+    private static final String DATA_PATH = "src/main/resources/data/train.csv";
 
     private static final int NUMBER_OF_CLASSES = 7;
     private static final int NUMBER_OF_TREES = 3;
@@ -44,7 +37,7 @@ public class ClassificationUsingRandomForest {
         final JavaSparkContext jsc = new JavaSparkContext(conf);
 
         // Load csv.
-        JavaRDD<LabeledPoint> data = getData(jsc, TRAINING_DATA_PATH);
+        JavaRDD<LabeledPoint> data = DataExtractor.getHexadecimalData(jsc, DATA_PATH);
 
         //Split data.
         JavaRDD<LabeledPoint>[] splits = data.randomSplit(new double[]{0.7, 0.3});
@@ -54,21 +47,18 @@ public class ClassificationUsingRandomForest {
         // Train a RandomForest model.
         // Empty categoricalFeaturesInfo indicates all features are continuous.
         HashMap<Integer, Integer> categoricalFeaturesInfo = new HashMap<>();
-        String featureSubsetStrategy = "auto";
-        String impurity = "gini";
 
         final RandomForestModel model = RandomForest.trainClassifier(
             trainingData,
             NUMBER_OF_CLASSES,
             categoricalFeaturesInfo,
             NUMBER_OF_TREES,
-            featureSubsetStrategy,
-            impurity,
+            "auto",
+            "gini",
             MAX_DEPTH,
             MAX_BINS,
             SEED
         );
-
 
         // Evaluate model on test instances and compute test error
         JavaRDD<Tuple2<Double, Double>> predictionAndLabel = testData.map(
@@ -85,30 +75,6 @@ public class ClassificationUsingRandomForest {
         System.out.println("Learned classification forest model:\n" + model.toDebugString());
 
         // Save model
-        //model.save(jsc.sc(), "src/main/resources/models/myRandomForestClassificationModel");
-    }
-
-
-    private static JavaRDD<LabeledPoint> getData(JavaSparkContext context, String path) {
-        return context.textFile(path).map((Function<String, LabeledPoint>) line -> {
-            if (!line.contains("x")) {
-                String[] words = line.split(",");
-
-                double[] values = new double[words.length - 1];
-                for (int i = 0; i < words.length - 1; i++) {
-                    values[i] = words[i].length() == 0 ? Double.NaN : (
-                        words[i].contains(".") ?
-                        Double.parseDouble(words[i]) : Long.parseLong(words[i], 16)
-                    );
-                }
-
-                return new LabeledPoint(
-                    Double.parseDouble(words[words.length - 1]),
-                    Vectors.dense(values)
-                );
-            }
-
-            return null;
-        }).filter((Function<LabeledPoint, Boolean>) Objects::nonNull);
+        model.save(jsc.sc(), "src/main/resources/models/myRandomForestClassificationModel");
     }
 }
