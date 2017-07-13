@@ -62,5 +62,6 @@ public class MLGradientBoostingPredictor {
         }
         System.out.println( "qps = " + (n / (1e-9 * (System.nanoTime() - t))) );
         System.out.println(s);
+        // ~246689.8139468778
     }
 }

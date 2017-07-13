@@ -26,7 +26,7 @@ public class ClassificationUsingDecisionTreesBoosting {
 
     private static final String MODEL_STORAGE_PATH = "src/main/resources/models/gradientBoostingClassifier";
 
-    private static final int ITERATIONS = 100;
+    private static final int ITERATIONS = 1000;
     private static final int CLASSES = 2;
     private static final int MAX_DEPTH = 30;
 

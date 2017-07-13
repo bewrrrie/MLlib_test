@@ -4,7 +4,6 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.SparkContext;
 import org.junit.Test;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.Assert.*;
@@ -15,7 +14,7 @@ import static org.junit.Assert.*;
 public class MLGradientBoostingPredictorTest {
 
     @Test
-    public void predictMultithreading() throws Exception {
+    public void testMultithreadedPrediction() throws Exception {
         //Creating Spark environment.
         final SparkConf conf = new SparkConf()
             .setAppName("test/MultithreadedGradientBoostingPrediction")
